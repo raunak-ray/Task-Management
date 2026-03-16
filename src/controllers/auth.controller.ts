@@ -10,6 +10,7 @@ export const registerController = expressAsyncHandler(
   async (req: Request, res: Response) => {
     let { name, email, password } = req.body;
 
+    // Basic validation
     if (!name || !email || !password) {
       throw new AppError(400, "All fields are required");
     }
@@ -17,7 +18,7 @@ export const registerController = expressAsyncHandler(
     name = name.trim();
     email = email.trim().toLowerCase();
 
-    // Email validation
+    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
@@ -30,6 +31,7 @@ export const registerController = expressAsyncHandler(
       throw new AppError(409, "User already exists");
     }
 
+    // Password rule
     if (password.length < 8) {
       throw new AppError(400, "Password must be at least 8 characters long");
     }
@@ -42,8 +44,6 @@ export const registerController = expressAsyncHandler(
       password: hashedPassword,
     });
 
-    const token = generateToken(user._id.toString(), user.role);
-
     sendResponse(res, {
       statusCode: 201,
       message: "User registered successfully",
@@ -52,7 +52,6 @@ export const registerController = expressAsyncHandler(
         name: user.name,
         email: user.email,
         role: user.role,
-        token,
       },
     });
   },
@@ -71,15 +70,17 @@ export const loginController = expressAsyncHandler(
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new AppError(401, "Invalid Credentials");
+      throw new AppError(401, "Invalid credentials");
     }
 
+    // Compare provided password with hashed password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new AppError(401, "Invalid Credentials");
+      throw new AppError(401, "Invalid credentials");
     }
 
+    // Generate JWT token for authenticated user
     const token = generateToken(user._id.toString(), user.role);
 
     sendResponse(res, {

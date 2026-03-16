@@ -4,12 +4,12 @@ import "dotenv/config";
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export interface AuthPayload {
-  userId: string;
+  id: string;
   role: string;
 }
 
 export const generateToken = (userId: string, role: string) => {
-  return jwt.sign({ userId: userId, role: role }, JWT_SECRET, {
+  return jwt.sign({ id: userId, role: role }, JWT_SECRET, {
     expiresIn: "1d",
   });
 };
