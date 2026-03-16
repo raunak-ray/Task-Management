@@ -1,17 +1,59 @@
 import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
-import { sendResponse } from "../lib/sendResponse";
+import { sendResponse } from "../lib/sendResponse.ts";
+import { AppError } from "../lib/AppError.ts";
+import { User } from "../models/user.model.ts";
+import bcrypt from "bcryptjs";
 
 export const registerController = expressAsyncHandler(
   async (req: Request, res: Response) => {
+    let { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      throw new AppError(400, "All fields are required");
+    }
+
+    name = name.trim();
+    email = email.trim().toLowerCase();
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      throw new AppError(400, "Invalid email address");
+    }
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      throw new AppError(409, "User already exists");
+    }
+
+    if (password.length < 8) {
+      throw new AppError(400, "Password must be at least 8 characters long");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: 201,
       message: "User registered successfully",
-      data: {},
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   },
 );
 
 export const loginController = expressAsyncHandler(
-  async (req: Request, res: Response) => {},
+  async (req: Request, res: Response) => {}
 );
