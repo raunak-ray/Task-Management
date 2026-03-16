@@ -1,6 +1,6 @@
 import express from "express";
 import "dotenv/config";
-import { connectToDb } from "./config/db";
+import { connectToDb } from "./config/db.ts";
 import authRoutes from "./routes/auth.route.ts";
 import { loggerMiddleware } from "./middleware/logger.middleware.ts";
 import { errorMiddleware } from "./middleware/error.middleware.ts";

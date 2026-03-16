@@ -42,6 +42,8 @@ export const registerController = expressAsyncHandler(
       password: hashedPassword,
     });
 
+    const token = generateToken(user._id.toString(), user.role);
+
     sendResponse(res, {
       statusCode: 201,
       message: "User registered successfully",
@@ -50,6 +52,7 @@ export const registerController = expressAsyncHandler(
         name: user.name,
         email: user.email,
         role: user.role,
+        token,
       },
     });
   },
