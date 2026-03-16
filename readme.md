@@ -118,6 +118,20 @@ http://localhost:5500
 
 ---
 
+# Live API (Deployed)
+
+The API is deployed on Render and can be accessed here:
+
+Base URL:
+
+https://task-management-odrj.onrender.com
+
+Example:
+
+https://task-management-odrj.onrender.com/auth/login
+
+---
+
 # Authentication
 
 ## Register User
