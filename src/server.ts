@@ -14,10 +14,20 @@ app.use(express.json());
 
 app.use(loggerMiddleware);
 
+// Root endpoint
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Task Management API is running",
+    healthCheck: "/health",
+    authRoutes: "/auth",
+    taskRoutes: "/tasks"
+  });
+});
+
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 
-// Health check endpoint for deployments
+// Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
