@@ -17,9 +17,22 @@ app.use(loggerMiddleware);
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 
+// Health check endpoint for deployments
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Server is running",
+  });
+});
+
 app.use(errorMiddleware);
 
-app.listen(PORT, () => {
-  console.log(`Server started on Port: ${PORT}`);
-  connectToDb();
-});
+async function startServer() {
+  await connectToDb();
+
+  app.listen(PORT, () => {
+    console.log(`Server started on Port: ${PORT}`);
+  });
+}
+
+startServer();

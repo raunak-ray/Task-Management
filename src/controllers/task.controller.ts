@@ -35,7 +35,7 @@ export const createTaskController = expressAsyncHandler(
       message: "Task created successfully",
       data: task,
     });
-  }
+  },
 );
 
 export const getTasksController = expressAsyncHandler(
@@ -56,7 +56,7 @@ export const getTasksController = expressAsyncHandler(
 
     // Optional filtering by title
     if (title) {
-        filter.title = title;
+      filter.title = title;
     }
 
     const tasks = await Task.find(filter)
@@ -67,7 +67,7 @@ export const getTasksController = expressAsyncHandler(
       message: "Tasks fetched successfully",
       data: tasks,
     });
-  }
+  },
 );
 
 export const getTaskByIdController = expressAsyncHandler(
@@ -81,7 +81,10 @@ export const getTaskByIdController = expressAsyncHandler(
     }
 
     // Only admin or task creator can access
-    if (req.user?.role !== "admin" && task.createdBy.toString() !== req.user?.id) {
+    if (
+      req.user?.role !== "admin" &&
+      task.createdBy.toString() !== req.user?.id
+    ) {
       throw new AppError(403, "Not allowed to access this task");
     }
 
@@ -89,7 +92,7 @@ export const getTaskByIdController = expressAsyncHandler(
       message: "Task fetched successfully",
       data: task,
     });
-  }
+  },
 );
 
 export const updateTaskController = expressAsyncHandler(
@@ -126,7 +129,7 @@ export const updateTaskController = expressAsyncHandler(
       message: "Task updated successfully",
       data: task,
     });
-  }
+  },
 );
 
 export const deleteTaskController = expressAsyncHandler(
@@ -150,5 +153,5 @@ export const deleteTaskController = expressAsyncHandler(
     sendResponse(res, {
       message: "Task deleted successfully",
     });
-  }
+  },
 );
