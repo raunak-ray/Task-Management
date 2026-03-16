@@ -4,6 +4,7 @@ import { sendResponse } from "../lib/sendResponse.ts";
 import { AppError } from "../lib/AppError.ts";
 import { User } from "../models/user.model.ts";
 import bcrypt from "bcryptjs";
+import { generateToken } from "../lib/jwtToken.ts";
 
 export const registerController = expressAsyncHandler(
   async (req: Request, res: Response) => {
@@ -55,5 +56,39 @@ export const registerController = expressAsyncHandler(
 );
 
 export const loginController = expressAsyncHandler(
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    let { email, password } = req.body;
+
+    if (!email || !password) {
+      throw new AppError(400, "All fields are required");
+    }
+
+    email = email.trim().toLowerCase();
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new AppError(401, "Invalid Credentials");
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      throw new AppError(401, "Invalid Credentials");
+    }
+
+    const token = generateToken(user._id.toString(), user.role);
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: "User logged in successfully",
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token,
+      },
+    });
+  },
 );
