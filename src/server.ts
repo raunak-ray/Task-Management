@@ -2,6 +2,7 @@ import express from "express";
 import "dotenv/config";
 import { connectToDb } from "./config/db.ts";
 import authRoutes from "./routes/auth.route.ts";
+import taskRoutes from "./routes/task.route.ts";
 import { loggerMiddleware } from "./middleware/logger.middleware.ts";
 import { errorMiddleware } from "./middleware/error.middleware.ts";
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(loggerMiddleware);
 
 app.use("/auth", authRoutes);
+app.use("/tasks", taskRoutes);
 
 app.use(errorMiddleware);
 
