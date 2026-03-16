@@ -1,16 +1,23 @@
 import express from "express";
 import "dotenv/config";
-import { connectToDb } from "./config/db";
+import { connectToDb } from "./config/db.ts";
+import authRoutes from "./routes/auth.route.ts";
+import { loggerMiddleware } from "./middleware/logger.middleware.ts";
+import { errorMiddleware } from "./middleware/error.middleware.ts";
 
 const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-app.get("/", (req, res) => {
-    return res.json({message: "Hello World"})
-})
+app.use(express.json());
+
+app.use(loggerMiddleware);
+
+app.use("/auth", authRoutes);
+
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
-    console.log(`Server started on Port: ${PORT}`)
-    connectToDb();
-})
+  console.log(`Server started on Port: ${PORT}`);
+  connectToDb();
+});
