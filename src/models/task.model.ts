@@ -22,7 +22,7 @@ const taskSchema = new Schema<ITask>(
     status: {
       type: String,
       enum: ["todo", "in-progress", "done"],
-      default: "to-do",
+      default: "todo",
     },
     createdBy: {
       type: Schema.Types.ObjectId,
